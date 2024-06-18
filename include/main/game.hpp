@@ -27,8 +27,8 @@ namespace cppGameDev {
 class Game {
    public:
     Game() {
-        this->player = new PhysicsEntities("player", {21, 21, 64, 64}, "");
         this->tilemap = new Tilemap();
+        this->player = new PhysicsEntities("player", {21, 21, 32, 32}, "", this->tilemap);
     }
     ~Game() {
         delete this->player;
@@ -68,8 +68,8 @@ class Game {
 
    private:
     bool isRunning = true;
-    PhysicsEntities* player;
     Tilemap* tilemap;
+    PhysicsEntities* player;
     std::pair<int, int> movement = {0, 0};
 };
 }  // namespace cppGameDev

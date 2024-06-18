@@ -22,7 +22,7 @@ namespace cppGameDev {
 
 class Animation {
    public:
-    Animation(const std::vector<__SDL_Texture> imgs, int img_dur = 5,
+    Animation(const std::vector<SDL_Texture *> imgs, int img_dur = 5,
               bool loop = true) {
         this->images = imgs;
         this->img_duration = img_dur;
@@ -46,16 +46,16 @@ class Animation {
     /**
      * Get the image that represents the current frame.
      *
-     * \returns (__SDL_Texture *):
+     * \returns (SDL_Texture * *):
      * The image that represents the frame.
      *
      */
-    __SDL_Texture img();
+    SDL_Texture * img();
 
-    std::vector<__SDL_Texture>* img_list();
+    std::vector<SDL_Texture *>* img_list();
 
    private:
-    std::vector<__SDL_Texture> images;
+    std::vector<SDL_Texture *> images;
     int img_duration;
     bool is_looping;
     bool done;

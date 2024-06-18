@@ -24,7 +24,7 @@ namespace cppGameDev {
 namespace assets {
 
 extern std::map<std::string, Animation*> animations;
-extern std::map<std::string, std::vector<__SDL_Texture>> tiles;
+extern std::map<std::string, std::vector<SDL_Texture *>> tiles;
 
 /**
  * Initializes the game assets.

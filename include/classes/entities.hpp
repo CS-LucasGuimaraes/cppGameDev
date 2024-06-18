@@ -1,15 +1,15 @@
 // Copyright (C) 2024 Lucas Guimarães
-// 
+//
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
 //     the Free Software Foundation, either version 3 of the License, or
 //     (at your option) any later version.
-// 
+//
 //     This program is distributed in the hope that it will be useful,
 //     but WITHOUT ANY WARRANTY; without even the implied warranty of
 //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //     GNU General Public License for more details.
-// 
+//
 //     You should have received a copy of the GNU General Public License
 //     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,26 +17,24 @@
 #define CPPGAMEDEV_CORE_ENTITIES_HPP_
 
 #include "classes/animation.hpp"
+#include "classes/tilemap.hpp"
 #include "core/assets.hpp"
 #include "core/engine.hpp"
 
 namespace cppGameDev {
 
+struct Collisions {
+    bool up;
+    bool down;
+    bool left;
+    bool right;
+};
+
 class PhysicsEntities {
    public:
-    PhysicsEntities(std::string e_type, SDL_Rect initial_rect, std::string ID) {
-        this->type = e_type;
-        this->entityRect = initial_rect;
-        this->pos.x = this->entityRect.x;
-        this->pos.y = this->entityRect.y;
-        this->ID = ID;
-
-        this->set_action("idle");
-    }
-    ~PhysicsEntities() {
-        std::clog << "PhysicsEntities class (" << this->type << ':' << this->ID
-                  << ") successfully destroyed!\n";
-    }
+    PhysicsEntities(std::string e_type, SDL_Rect initial_rect, std::string ID,
+                    Tilemap *tilemap);
+    ~PhysicsEntities() ;
 
     /**
      * Updates the physics entity's internal state.
@@ -61,10 +59,12 @@ class PhysicsEntities {
     cppGameDev::Speed pos;
     cppGameDev::Speed speed = {0.0, 0.0};
     cppGameDev::RGB color_mod = {255, 255, 255};
+    Tilemap *tilemap;
     Animation *animation;
     SDL_Rect entityRect;
-    std::map<std::string, bool> collisions;
+    Collisions collisions;
     bool flip = false;
+    std::map<std::string, std::function<void(Speed, SDL_Rect*)>> collide;
 
     /**
      * Sets the action of the physics entity.
@@ -79,10 +79,15 @@ class PhysicsEntities {
      */
     void set_action(std::string action);
 
+    Cord getPos();
+
     void reset_collisions();
     void movement_and_collide(int movement);
     void movement_physics();
     void facing_side(int movement);
+
+    void physics_tiles_collisions_X(Speed movement, SDL_Rect* tile_rect);
+    void physics_tiles_collisions_Y(Speed movement, SDL_Rect* tile_rect);
 };
 }  // namespace cppGameDev
 

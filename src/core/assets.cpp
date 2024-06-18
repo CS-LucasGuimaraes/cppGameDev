@@ -19,7 +19,7 @@ namespace cppGameDev {
 namespace assets {
 
 std::map<std::string, Animation*> animations;
-std::map<std::string, std::vector<__SDL_Texture>> tiles;
+std::map<std::string, std::vector<SDL_Texture *>> tiles;
 
 bool init() {
     animations = {

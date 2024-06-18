@@ -19,12 +19,12 @@ namespace cppGameDev {
 
 std::string BASE_PATH = "../assets/images/";
 
-__SDL_Texture load_image(const char* path) {
+SDL_Texture * load_image(const char* path) {
     return IMG_LoadTexture(cppGameDev::renderer, path);
 }
 
-const std::vector<__SDL_Texture> load_images(const char* path) {
-    std::vector<__SDL_Texture> images;
+const std::vector<SDL_Texture *> load_images(const char* path) {
+    std::vector<SDL_Texture *> images;
     for (auto const& file :
          std::filesystem::directory_iterator((BASE_PATH + path).c_str())) {
         images.push_back(load_image((BASE_PATH + std::string(path) + "/" +

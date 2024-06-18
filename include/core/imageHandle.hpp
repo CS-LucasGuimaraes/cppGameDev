@@ -29,7 +29,7 @@ extern std::string BASE_PATH;
  * \returns the created texture or NULL on failure; call SDL_GetError() for more
  * information.
  */
-__SDL_Texture load_image(const char* path);
+SDL_Texture * load_image(const char* path);
 
 /**
  * Create a list of textures from a folder path.
@@ -37,7 +37,7 @@ __SDL_Texture load_image(const char* path);
  * \param path a path on the filesystem to the folder you want to load the
  * images from. \returns a vector with the created textures or NULL on failure;
  */
-const std::vector<__SDL_Texture> load_images(const char* path);
+const std::vector<SDL_Texture *> load_images(const char* path);
 
 }  // namespace cppGameDev
 

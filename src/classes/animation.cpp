@@ -31,9 +31,9 @@ void Animation::update() {
     }
 }
 
-__SDL_Texture Animation::img() {
+SDL_Texture * Animation::img() {
     return this->images[size_t(this->frame / this->img_duration)];
 }
 
-std::vector<__SDL_Texture>* Animation::img_list() { return &this->images; }
+std::vector<SDL_Texture *>* Animation::img_list() { return &this->images; }
 }  // namespace cppGameDev

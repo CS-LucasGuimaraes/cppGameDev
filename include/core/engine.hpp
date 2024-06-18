@@ -19,13 +19,10 @@
 #include <bits/stdc++.h>
 
 #include "SDL2/SDL.h"
-#include "SDL2/sdl_image.h"
+#include "SDL2/SDL_image.h"
 #include "nlohmann/json.hpp"
 
 namespace cppGameDev {
-
-using __SDL_Texture = DECLSPEC SDL_Texture *SDLCALL;
-using __SDL_Renderer = DECLSPEC SDL_Renderer *SDLCALL;
 
 struct RGB {
     Uint8 r;
