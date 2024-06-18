@@ -1,17 +1,16 @@
-// Copyright (C) 2024 Lucas Guimarães
+//    Copyright 2024 Lucas Guimarães Fernandes
 //
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
 //
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
+//        http://www.apache.org/licenses/LICENSE-2.0
 //
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
 
 #ifndef CPPGAMEDEV_CORE_GAME_HPP_
 #define CPPGAMEDEV_CORE_GAME_HPP_
@@ -21,10 +20,11 @@
 #include "core/assets.hpp"
 #include "core/engine.hpp"
 #include "core/imageHandle.hpp"
+#include "main/app.hpp"
 
 namespace cppGameDev {
 
-class Game {
+class Game : public App {
    public:
     Game();
     ~Game(); 
@@ -36,21 +36,21 @@ class Game {
      * true if the game should continue running.
      * false if the game should exit.
      */
-    bool handleEvents();
+    bool handleEvents() override;
 
     /**
      * Updates the game state and logic.
      *
      * \returns (void): This function does not return a value.
      */
-    void update();
+    void update() override;
 
     /**
      * Renders the game state to the screen.
      *
      * \returns (void): This function does not return a value.
      */
-    void render();
+    void render() override;
 
     /**
      * Checks if the game is currently running.
@@ -58,7 +58,7 @@ class Game {
      *  true if the game is running.
      *  false if the game has quit.
      */
-    bool running() { return this->isRunning; }
+    bool running() override { return this->isRunning; }
 
    private:
     bool isRunning = true;

@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [v0.0.3] Foundation Update
 
-**Date:** June 17, 2024
+**Date:** June 18, 2024
 
 This update brings significant improvements to code organization, build
 infrastructure, asset management, and core functionalities.
@@ -63,10 +63,11 @@ infrastructure, asset management, and core functionalities.
 
 **Additional Notes:**
 
-- The project license has been changed from MIT to GPL-3.0. Please review and
-  accept the revised license terms before contributing or using the code.
-- A GPL-3.0 boilerplate has been added to each file to ensure compliance with
-  the license terms.
+- The project license has been changed from MIT to Apache License 2.0. Please 
+  review and accept the revised license terms before contributing or using the
+  code.
+- An Apache License 2.0 boilerplate has been added to each file to ensure 
+  compliance with the license terms.
 
 ## [v0.0.2] Engine & Asset Management
 

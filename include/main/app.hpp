@@ -12,25 +12,14 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
-#ifndef CPPGAMEDEV_CORE_EDITOR_HPP_
-#define CPPGAMEDEV_CORE_EDITOR_HPP_
-
-#include "classes/entities.hpp"
-#include "classes/tilemap.hpp"
-#include "core/assets.hpp"
-#include "core/engine.hpp"
-#include "core/imageHandle.hpp"
-#include "main/app.hpp"
+#ifndef CPPGAMEDEV_CORE_APP_HPP_
+#define CPPGAMEDEV_CORE_APP_HPP_
 
 namespace cppGameDev {
 
-class Editor : public App {
+class App {
    public:
-    Editor() { this->tilemap = new Tilemap(); }
-    ~Editor() {
-        delete this->tilemap;
-        std::clog << "Editor class successfully destroyed!\n";
-    }
+    virtual ~App() {};
 
     /**
      * Processes user input events in the game loop.
@@ -39,21 +28,21 @@ class Editor : public App {
      * true if the game should continue running.
      * false if the game should exit.
      */
-    bool handleEvents() override;
+    virtual bool handleEvents() = 0;
 
     /**
      * Updates the game state and logic.
      *
      * \returns (void): This function does not return a value.
      */
-    void update() override;
+    virtual void update() = 0;
 
     /**
      * Renders the game state to the screen.
      *
      * \returns (void): This function does not return a value.
      */
-    void render() override;
+    virtual void render() = 0;
 
     /**
      * Checks if the game is currently running.
@@ -61,30 +50,8 @@ class Editor : public App {
      *  true if the game is running.
      *  false if the game has quit.
      */
-    bool running() override { return this->isRunning; }
-
-    void cameraControl();
-
-    Cord getTilePos();
-
-    Tilemap* tilemap;
-
-   private:
-    Uint8 scrollSpeed = 2;
-    bool isRunning = true;
-    std::pair<int, int> movementX = {0, 0};
-    std::pair<int, int> movementY = {0, 0};
-    Cord scroll = {0, 0};
-    Cord mpos = {0, 0};
-    bool clicking = false;
-    bool right_clicking = false;
-    bool ongrid = true;
-
-    std::vector<std::pair<std::string, std::string>> tile_list = {
-        {"grass", "Physical"}};
-    Uint8 tile_group = 0;
-    Uint8 tile_variant = 0;
+    virtual bool running() = 0;
 };
 }  // namespace cppGameDev
 
-#endif  // CPPGAMEDEV_CORE_EDITOR_HPP_
+#endif  // CPPGAMEDEV_CORE_APP_HPP_
