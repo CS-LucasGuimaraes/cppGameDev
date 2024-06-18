@@ -33,8 +33,8 @@ struct Collisions {
 class PhysicsEntities {
    public:
     PhysicsEntities(std::string e_type, SDL_Rect initial_rect, std::string ID,
-                    Tilemap *tilemap);
-    ~PhysicsEntities() ;
+                    Tilemap* tilemap);
+    virtual ~PhysicsEntities();
 
     /**
      * Updates the physics entity's internal state.
@@ -43,24 +43,24 @@ class PhysicsEntities {
      *
      * @returns (void): This function does not return a value.
      */
-    void update(int movement = 0);
+    virtual void update(int movement = 0);
 
     /**
      *  Render the entity's animation onto the cppGameDev::renderer surface.
      *
      * \returns (void): This function does not return a value.
      */
-    void render();
+    virtual void render();
 
-   private:
+   protected:
     std::string type;
     std::string ID;
     std::string action = "";
     cppGameDev::Speed pos;
     cppGameDev::Speed speed = {0.0, 0.0};
     cppGameDev::RGB color_mod = {255, 255, 255};
-    Tilemap *tilemap;
-    Animation *animation;
+    Tilemap* tilemap;
+    Animation* animation;
     SDL_Rect entityRect;
     Collisions collisions;
     bool flip = false;
@@ -89,6 +89,26 @@ class PhysicsEntities {
     void physics_tiles_collisions_X(Speed movement, SDL_Rect* tile_rect);
     void physics_tiles_collisions_Y(Speed movement, SDL_Rect* tile_rect);
 };
+
+class Player : public PhysicsEntities {
+   public:
+    Player(std::string e_type, SDL_Rect initial_rect, std::string ID,
+           Tilemap* tilemap);
+    ~Player();
+
+    virtual void update(int movement) override;
+    void Jump();
+
+   protected:
+    int max_jumps;
+    int jumps;
+    int air_time;
+    bool in_air;
+
+    void JumpControl();
+    void WallJump();
+};
+
 }  // namespace cppGameDev
 
 #endif  // CPPGAMEDEV_CORE_ENTITIES_HPP_

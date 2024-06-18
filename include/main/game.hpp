@@ -1,15 +1,15 @@
 // Copyright (C) 2024 Lucas Guimarães
-// 
+//
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
 //     the Free Software Foundation, either version 3 of the License, or
 //     (at your option) any later version.
-// 
+//
 //     This program is distributed in the hope that it will be useful,
 //     but WITHOUT ANY WARRANTY; without even the implied warranty of
 //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //     GNU General Public License for more details.
-// 
+//
 //     You should have received a copy of the GNU General Public License
 //     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -26,14 +26,8 @@ namespace cppGameDev {
 
 class Game {
    public:
-    Game() {
-        this->tilemap = new Tilemap();
-        this->player = new PhysicsEntities("player", {21, 21, 32, 32}, "", this->tilemap);
-    }
-    ~Game() {
-        delete this->player;
-        std::clog << "Game class successfully destroyed!\n";
-    }
+    Game();
+    ~Game(); 
 
     /**
      * Processes user input events in the game loop.
@@ -69,7 +63,7 @@ class Game {
    private:
     bool isRunning = true;
     Tilemap* tilemap;
-    PhysicsEntities* player;
+    Player* player;
     std::pair<int, int> movement = {0, 0};
 };
 }  // namespace cppGameDev

@@ -48,7 +48,7 @@ void PhysicsEntities::update(int movement) {
     this->reset_collisions();
     this->movement_and_collide(movement);
     this->movement_physics();
-    this->facing_side(movement);
+    this->facing_side(movement + this->speed.x);
     this->animation->update();
 }
 
@@ -93,7 +93,7 @@ void PhysicsEntities::movement_and_collide(int movement) {
 
         this->collide[tile->category + "X"](frame_movement, &tile_rect);
     }
-    
+
     this->pos.y += frame_movement.y;
     this->entityRect.y = this->pos.y;
 
@@ -158,6 +158,69 @@ void PhysicsEntities::physics_tiles_collisions_Y(Speed movement,
         }
 
         this->pos.y = this->entityRect.y;
+    }
+}
+
+// public
+
+Player::Player(std::string e_type, SDL_Rect initial_rect, std::string ID,
+               Tilemap* tilemap)
+    : PhysicsEntities(e_type, initial_rect, ID, tilemap) {
+    this->max_jumps = 2;
+    this->jumps = this->max_jumps;
+    this->air_time = 0;
+    this->in_air = false;
+}
+
+Player::~Player() { ; }
+
+// private
+
+void Player::JumpControl() {
+    this->air_time++;
+
+    if (this->air_time > 10) {
+        this->in_air = true;
+    }
+
+    if (this->collisions.down) {
+        this->jumps = this->max_jumps;
+        this->air_time = 0;
+        this->in_air = false;
+    }
+}
+
+void Player::update(int movement) {
+    PhysicsEntities::update(movement);
+
+    this->JumpControl();
+}
+
+void Player::WallJump() {
+    if (this->collisions.left) {
+        this->speed.x = +2.75;
+        this->flip = true;
+    } else if (this->collisions.right) {
+        this->speed.x = -2.75;
+        this->flip = false;
+    }
+
+    this->speed.y = -2;
+    this->jumps = std::max(0, this->jumps - 1);
+}
+
+void Player::Jump() {
+    if (this->in_air && (this->collisions.right || this->collisions.left)) {
+        this->WallJump();
+    }
+
+    else if (this->jumps > 0) {
+        if ((this->jumps != this->max_jumps) ||
+            (this->jumps == this->max_jumps && !this->in_air)) {
+            this->speed.y = -3.1;
+            this->jumps--;
+            this->in_air = true;
+        }
     }
 }
 

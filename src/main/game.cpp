@@ -1,21 +1,31 @@
 // Copyright (C) 2024 Lucas Guimarães
-// 
+//
 //     This program is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
 //     the Free Software Foundation, either version 3 of the License, or
 //     (at your option) any later version.
-// 
+//
 //     This program is distributed in the hope that it will be useful,
 //     but WITHOUT ANY WARRANTY; without even the implied warranty of
 //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //     GNU General Public License for more details.
-// 
+//
 //     You should have received a copy of the GNU General Public License
 //     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "main/game.hpp"
 
 namespace cppGameDev {
+
+Game::Game() {
+    this->tilemap = new Tilemap();
+    this->player = new Player("player", {21, 21, 32, 32}, "", this->tilemap);
+}
+
+Game::~Game() {
+    delete this->player;
+    std::clog << "Game class successfully destroyed!\n";
+}
 
 bool Game::handleEvents() {
     SDL_Event event;
@@ -34,6 +44,8 @@ bool Game::handleEvents() {
                     case SDLK_d:
                         this->movement.second = 1;
                         break;
+                    case SDLK_SPACE:
+                        this->player->Jump();
                 }
                 break;
 
