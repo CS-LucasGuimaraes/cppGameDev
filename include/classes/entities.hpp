@@ -86,8 +86,7 @@ class PhysicsEntities {
     void movement_physics();
     void facing_side(int movement);
 
-    void physics_tiles_collisions_X(Speed movement, SDL_Rect* tile_rect);
-    void physics_tiles_collisions_Y(Speed movement, SDL_Rect* tile_rect);
+    void defCollisions();
 };
 
 class Player : public PhysicsEntities {

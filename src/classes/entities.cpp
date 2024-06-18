@@ -30,13 +30,7 @@ PhysicsEntities::PhysicsEntities(std::string e_type, SDL_Rect initial_rect,
 
     this->set_action("idle");
 
-    this->collide["PhysicalX"] =
-        std::bind(&PhysicsEntities::physics_tiles_collisions_X, this,
-                  std::placeholders::_1, std::placeholders::_2);
-
-    this->collide["PhysicalY"] =
-        std::bind(&PhysicsEntities::physics_tiles_collisions_Y, this,
-                  std::placeholders::_1, std::placeholders::_2);
+    this->defCollisions();
 }
 
 PhysicsEntities::~PhysicsEntities() {
@@ -91,7 +85,7 @@ void PhysicsEntities::movement_and_collide(int movement) {
                               tile->pos.y * this->tilemap->tile_size,
                               tilemap->tile_size, tilemap->tile_size};
 
-        this->collide[tile->category + "X"](frame_movement, &tile_rect);
+            this->collide[tile->category + "X"](frame_movement, &tile_rect);
     }
 
     this->pos.y += frame_movement.y;
@@ -132,33 +126,37 @@ Cord PhysicsEntities::getPos() {
     return {this->entityRect.x, this->entityRect.y};
 }
 
-void PhysicsEntities::physics_tiles_collisions_X(Speed movement,
-                                                 SDL_Rect* tile_rect) {
-    if (CollideRect(&this->entityRect, tile_rect)) {
-        if (movement.x > 0) {
-            this->collisions.right = true;
-            this->entityRect.x = tile_rect->x - this->entityRect.w;
-        } else if (movement.x < 0) {
-            this->collisions.left = true;
-            this->entityRect.x = tile_rect->x + tile_rect->w;
-        }
-        this->pos.x = this->entityRect.x;
-    }
-}
+void PhysicsEntities::defCollisions() {
+    this->collide = {
+        {"PhysicalX",
+         [this](Speed movement, SDL_Rect* tile_rect) {
+             if (CollideRect(&this->entityRect, tile_rect)) {
+                 if (movement.x > 0) {
+                     this->collisions.right = true;
+                     this->entityRect.x = tile_rect->x - this->entityRect.w;
+                 } else if (movement.x < 0) {
+                     this->collisions.left = true;
+                     this->entityRect.x = tile_rect->x + tile_rect->w;
+                 }
+                 this->pos.x = this->entityRect.x;
+             }
+         }},
 
-void PhysicsEntities::physics_tiles_collisions_Y(Speed movement,
-                                                 SDL_Rect* tile_rect) {
-    if (CollideRect(&this->entityRect, tile_rect)) {
-        if (movement.y > 0) {
-            this->collisions.down = true;
-            this->entityRect.y = tile_rect->y - this->entityRect.h;
-        } else if (movement.y < 0) {
-            this->collisions.up = true;
-            this->entityRect.y = tile_rect->y + tile_rect->h;
-        }
+        {"PhysicalY",
+         [this](Speed movement, SDL_Rect* tile_rect) {
+             if (CollideRect(&this->entityRect, tile_rect)) {
+                 if (movement.y > 0) {
+                     this->collisions.down = true;
+                     this->entityRect.y = tile_rect->y - this->entityRect.h;
+                 } else if (movement.y < 0) {
+                     this->collisions.up = true;
+                     this->entityRect.y = tile_rect->y + tile_rect->h;
+                 }
+                 this->pos.y = this->entityRect.y;
+             }
+         }}
 
-        this->pos.y = this->entityRect.y;
-    }
+    };
 }
 
 // public
