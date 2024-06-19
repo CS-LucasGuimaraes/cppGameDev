@@ -22,7 +22,8 @@
 namespace cppGameDev {
 namespace assets {
 
-extern std::map<std::string, Animation*> animations;
+extern std::map<std::string, std::unordered_set<int>> keybinds;
+extern std::map<std::string, Animation *> animations;
 extern std::map<std::string, std::vector<SDL_Texture *>> tiles;
 
 /**

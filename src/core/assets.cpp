@@ -17,10 +17,17 @@
 namespace cppGameDev {
 namespace assets {
 
-std::map<std::string, Animation*> animations;
+std::map<std::string, std::unordered_set<int>> keybinds;
+std::map<std::string, Animation *> animations;
 std::map<std::string, std::vector<SDL_Texture *>> tiles;
 
 bool init() {
+    keybinds = { 
+                {"LEFT", {SDLK_a, SDLK_LEFT} },
+                {"RIGHT", {SDLK_d, SDLK_RIGHT} },
+                {"JUMP", {SDLK_w, SDLK_UP, SDLK_SPACE} }
+            };
+
     animations = {
         {"player/idle", new Animation(load_images("entities/player/idle"), 16)},
     };

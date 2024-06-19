@@ -47,13 +47,16 @@ int main(int argc, char* argv[]) {
                   << "[2] editor\n";
         std::cin >> mode;
 
-        if (mode == 1) {
-            app = new Game();
-        } else if (mode == 2) {
-            app = new Editor();
+        switch (mode) {
+            case 1:
+                app = new Game();
+                break;
+            case 2:
+                app = new Editor();
+                break;
         }
 
-        while (app->running()) {
+        if (mode) while (app->running()) {
             frameStart = SDL_GetTicks64();
 
             app->handleEvents();

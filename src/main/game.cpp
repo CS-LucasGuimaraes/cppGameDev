@@ -23,6 +23,7 @@ Game::Game() {
 
 Game::~Game() {
     delete this->player;
+    delete this->tilemap;
     std::clog << "Game class successfully destroyed!\n";
 }
 
@@ -35,29 +36,26 @@ bool Game::handleEvents() {
                 return false;
 
             case SDL_KEYDOWN:
-                switch (event.key.keysym.sym) {
-                    case SDLK_a:
-                        this->movement.first = 1;
-                        break;
-
-                    case SDLK_d:
-                        this->movement.second = 1;
-                        break;
-                    case SDLK_SPACE:
-                        this->player->Jump();
+                if (assets::keybinds["LEFT"].count(event.key.keysym.sym)) {
+                    this->movement.first = 1;
+                } else if (assets::keybinds["RIGHT"].count(
+                               event.key.keysym.sym)) {
+                    this->movement.second = 1;
+                } else if (assets::keybinds["JUMP"].count(
+                               event.key.keysym.sym)) {
+                    this->player->Jump();
                 }
+
                 break;
 
             case SDL_KEYUP:
-                switch (event.key.keysym.sym) {
-                    case SDLK_a:
-                        this->movement.first = 0;
-                        break;
-
-                    case SDLK_d:
-                        this->movement.second = 0;
-                        break;
+                if (assets::keybinds["LEFT"].count(event.key.keysym.sym)) {
+                    this->movement.first = 0;
+                } else if (assets::keybinds["RIGHT"].count(
+                               event.key.keysym.sym)) {
+                    this->movement.second = 0;
                 }
+
                 break;
         }
     }

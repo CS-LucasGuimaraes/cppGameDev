@@ -1,5 +1,5 @@
 # To re-build a single file use:
-# g++ -fdiagnostics-color=always - Wall -g3 -c ${file} -o build/{filename}.o -Iinclude -Isrc
+# g++ -fdiagnostics-color=always -Wall -g3 -c -O2 -flto ${file} -o build/${filename}.o -Iinclude -Isrc
 				
 cd ../../build
 
@@ -8,6 +8,8 @@ g++ \
   -Wall \
   -g3 \
   -c \
+  -O2 \
+  -flto \
   ../src/main.cpp \
   ../src/core/*.cpp \
   ../src/main/*.cpp \

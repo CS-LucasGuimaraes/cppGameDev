@@ -6,6 +6,8 @@ g++ ^
   -g3 ^
   -o ^
   ..\bin\app.exe ^
+  -flto=auto^
+  -O2 ^
   *.o ^
   -lmingw32 ^
   -lSDL2main ^
