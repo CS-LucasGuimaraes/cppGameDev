@@ -64,7 +64,7 @@ class Game : public App {
     bool isRunning = true;
     Tilemap* tilemap;
     Player* player;
-    std::pair<int, int> movement = {0, 0};
+    Cord4d movement = {0, 0};
 };
 }  // namespace cppGameDev
 

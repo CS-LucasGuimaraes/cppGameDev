@@ -8,6 +8,7 @@ This project requires the following libraries to be built and run successfully:
   library.
 - **SDL2_image** (v2.8.2-3)- Image loading extension for SDL2.
 - **nlohmann-json** (v3.11.3-1)- A single-header JSON library for modern C++.
+- **yaml-cpp** (v0.8.0-1)- A YAML parser and emitter in C++ matching the YAML 1.2 spec.
 
 ### Installation
 
@@ -16,7 +17,7 @@ This project requires the following libraries to be built and run successfully:
 **Using mingw-w64:**
 
 ```bash
-pacman -S mingw-w64-x86_64-sdl2  mingw-w64-x86_64-sdl2_image  mingw-w64-x86_64-nlohmann-json
+pacman -S mingw-w64-x86_64-sdl2  mingw-w64-x86_64-sdl2_image  mingw-w64-x86_64-nlohmann-json  mingw-w64-x86_64-yaml-cpp
 ```
 
 Replace 'x86_64' with your desired architecture (e.g., i686) if needed
@@ -24,7 +25,7 @@ Replace 'x86_64' with your desired architecture (e.g., i686) if needed
 **Using apt-get:**
 
 ```bash
-sudo apt-get install libsdl2-dev  libsdl2-image-dev  nlohmann-json3-dev
+sudo apt-get install -y libsdl2-dev  libsdl2-image-dev  nlohmann-json3-dev  libyaml-cpp-dev
 ```
 
 Note: These commands provide basic installation instructions. You might need to

@@ -16,16 +16,13 @@
 
 namespace cppGameDev {
 
-int DivFloor(int a, int b) { return (int)std::floor((float)a / (float)b); }
+int DivFloor(int a, int b) { return (int)std::floor((double)a / (double)b); }
 
-int DivCeil(int a, int b) { return (int)std::ceil((float)a / (float)b); }
+int DivCeil(int a, int b) { return (int)std::ceil((double)a / (double)b); }
 
 bool CollideRect(SDL_Rect* a, SDL_Rect* b) {
-    if (((a->x + a->w > b->x) && (a->x < b->x + b->w)) &&
-        ((a->y + a->h > b->y) && (a->y < b->y + b->h))) {
-        return true;
-    }
-    return false;
+    return (a->x + a->w > b->x) && (a->x < b->x + b->w) &&
+           (a->y + a->h > b->y) && (a->y < b->y + b->h);
 }
 
 }  // namespace cppGameDev

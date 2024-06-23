@@ -31,80 +31,109 @@ struct Collisions {
 
 class PhysicsEntities {
    public:
-    PhysicsEntities(std::string e_type, SDL_Rect initial_rect, std::string ID,
+    PhysicsEntities(std::string e_type, SDL_Rect initial_rect, SDL_Rect hitbox, std::string ID,
                     Tilemap* tilemap);
     virtual ~PhysicsEntities();
 
     /**
-     * Updates the physics entity's internal state.
+     * @brief Updates the entity's position based on the given movement.
      *
-     * This function updates all the physics entity's state and logic.
+     * This function is called to update the position of the entity based on the
+     * provided movement. The movement is specified using a `Cord4d` object,
+     * which represents the movement in 4-dimensional space.
      *
-     * @returns (void): This function does not return a value.
+     * @param movement The movement to apply to the entity's position.
      */
-    virtual void update(int movement = 0);
+    virtual void update(Cord4d movement);
 
     /**
-     *  Render the entity's animation onto the cppGameDev::renderer surface.
+     * @brief Renders the entity.
      *
-     * \returns (void): This function does not return a value.
+     * This function is called to render the entity on the screen.
      */
     virtual void render();
 
    protected:
+    int current_speed;
     std::string type;
     std::string ID;
     std::string action = "";
     cppGameDev::Speed pos;
-    cppGameDev::Speed speed = {0.0, 0.0};
     cppGameDev::RGB color_mod = {255, 255, 255};
     Tilemap* tilemap;
     Animation* animation;
     SDL_Rect entityRect;
+    SDL_Rect hitbox;
+    SDL_Rect hitbox_mod;
     Collisions collisions;
-    bool flip = false;
+    std::string side;
+    std::string setted_side;
     std::map<std::string, std::function<void(Speed, SDL_Rect*)>> collide;
 
     /**
-     * Sets the action of the physics entity.
+     * Sets the action for the entity.
      *
-     * This function updates the action of the physics entity and assigns the
-     * corresponding animation.
-     *
-     * @param action (std::string): The new action to be set for the physics
-     * entity.
-     *
-     * @returns (void): This function does not return a value.
+     * @param action The action to set.
      */
     void set_action(std::string action);
 
+    /**
+     * @brief Retrieves the position of the entity.
+     *
+     * @return The position of the entity as a Cord object.
+     */
     Cord getPos();
 
+    /**
+     * @brief Resets the collision state of the entity.
+     *
+     * This function resets the collision state of the entity, allowing it to
+     * detect collisions again.
+     *
+     * @note This function does not modify the position or other properties of
+     * the entity.
+     */
     void reset_collisions();
-    void movement_and_collide(int movement);
-    void movement_physics();
-    void facing_side(int movement);
+
+    /**
+     * @brief Moves the entity and checks for collisions.
+     *
+     * This function moves the entity according to the movement vector and
+     * checks for collisions with the tilemap.
+     *
+     * @param movement The movement vector to apply to the entity.
+     */
+    void movement_and_collide(Cord4d movement);
+
+    /**
+     * @brief Sets the facing side of the entity.
+     *
+     * This function sets the facing side of the entity based on the movement
+     * vector.
+     *
+     * @param movement The movement vector to use to determine the facing side.
+     */
+    void facing_side(Cord4d movement);
 
     void defCollisions();
+
+    void ControlActions(Cord4d movement);
+
+    Speed getFrameMovement(Cord4d movement);
+
+    void updateHitbox();
+    void updateHitboxX();
+    void updateHitboxY();
 };
 
 class Player : public PhysicsEntities {
    public:
-    Player(std::string e_type, SDL_Rect initial_rect, std::string ID,
-           Tilemap* tilemap);
+    Player(SDL_Rect initial_rect, SDL_Rect hitbox, std::string ID, Tilemap* tilemap);
     ~Player();
 
-    virtual void update(int movement) override;
-    void Jump();
+    virtual void update(Cord4d movement) override;
 
    protected:
-    int max_jumps;
-    int jumps;
-    int air_time;
-    bool in_air;
-
-    void JumpControl();
-    void WallJump();
 };
 
 }  // namespace cppGameDev

@@ -20,52 +20,78 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 #include "nlohmann/json.hpp"
+#include "yaml-cpp/yaml.h"
 
 namespace cppGameDev {
 
+/**
+ * @brief Represents the RGB color values.
+ */
 struct RGB {
-    Uint8 r;
-    Uint8 g;
-    Uint8 b;
+    Uint8 r; /**< The red component. */
+    Uint8 g; /**< The green component. */
+    Uint8 b; /**< The blue component. */
 };
 
+/**
+ * @brief Represents the speed in the x and y directions.
+ */
 struct Speed {
-    float x;
-    float y;
+    double x; /**< The speed in the x direction. */
+    double y; /**< The speed in the y direction. */
 };
 
+/**
+ * @brief Represents the coordinates in the x and y directions.
+ */
 struct Cord {
-    int x;
-    int y;
+    int x; /**< The x coordinate. */
+    int y; /**< The y coordinate. */
+};
+
+/**
+ * @brief Represents the coordinates in the left, right, up, and down directions.
+ */
+struct Cord4d {
+    int l; /**< The left coordinate. */
+    int r; /**< The right coordinate. */
+    int u; /**< The up coordinate. */
+    int d; /**< The down coordinate. */
 };
 
 // struct tile in "tilemap.hpp"
 
-extern SDL_Window *screen;
-extern SDL_Renderer *renderer;
-extern SDL_Texture *display;
+extern const Uint32 FULLSCREEN; /**< The flag for fullscreen mode. */
+extern const Uint32 SHOW_HITBOXES; /**< The flag for showing hitboxes. */
 
-extern const Cord kDisplaySize;
-extern const Cord kScreenSize;
-extern const int kRenderScale;
+extern Uint32 kFlags; /**< The global flags variable. */
+
+extern SDL_Window *screen; /**< The game window. */
+extern SDL_Renderer *renderer; /**< The renderer for drawing graphics. */
+extern SDL_Texture *display; /**< The texture for displaying graphics. */
+
+extern const Cord kDisplaySize; /**< The size of the display. */
+extern const Cord kScreenSize; /**< The size of the screen. */
+extern const int kRenderScale; /**< The scale factor for rendering. */
 
 /**
- * Initializes the game window, renderer, and sets up basic properties.
- *
- * \param title (const char*): The title of the game window.
- * \param window_features (SDL_Rect): The X and Y pos and width and height of
- * the game window in pixels. \param fullscreen (bool): Whether to run the game
- * in fullscreen mode. \returns (bool): This function returns true on success,
- * or false on failure (e.g., loading errors).
+ * @brief Retrieves the flags from the settings file and sets the appropriate flags in the kFlags variable.
  */
-bool Init(const char *title, SDL_Rect window_features, bool fullscreen);
+void getFlags();
 
 /**
- * Deallocates resources and shuts down the engine.
+ * @brief Initializes the game engine.
  *
- * \returns (void): This function does not return a value.
+ * @param title The title of the game window.
+ * @param window_features The features of the game window.
+ * @return True if the initialization is successful, false otherwise.
+ */
+bool Init(const char *title, SDL_Rect window_features);
+
+/**
+ * @brief Deallocates resources and shuts down the engine.
  */
 void Shutdown();
 }  // namespace cppGameDev
 
-#endif // CPPGAMEDEV_CORE_ENGINE_HPP_
+#endif  // CPPGAMEDEV_CORE_ENGINE_HPP_

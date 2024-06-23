@@ -16,19 +16,39 @@
 
 namespace cppGameDev {
 
+const Uint32 FULLSCREEN = (1<<0);
+const Uint32 SHOW_HITBOXES = (1<<1);
+
+Uint32 kFlags = 0;
+
 SDL_Window *screen = nullptr;
 SDL_Renderer *renderer = nullptr;
 SDL_Texture *display = nullptr;
+
 
 const Cord kDisplaySize = {640, 360};
 const Cord kScreenSize = {1280, 720};
 const int kRenderScale = kScreenSize.x / kDisplaySize.x;
 
-bool Init(const char *title, SDL_Rect window_features, bool fullscreen) {
-    Uint32 flags = 0;
+void getFlags() {
+    YAML::Node config = YAML::LoadFile("../data/settings.yaml");
 
-    if (fullscreen) {
-        flags |= SDL_WINDOW_FULLSCREEN;
+    if (config["fullscreen"].as<bool>()) {  
+        kFlags |= FULLSCREEN;
+    }
+
+    if (config["show_hitboxes"].as<bool>()) {
+        kFlags |= SHOW_HITBOXES;
+    }
+}
+
+bool Init(const char *title, SDL_Rect window_features) {
+    Uint32 SDLflags = 0;
+
+    getFlags();
+
+    if (kFlags & FULLSCREEN) {
+        SDLflags |= SDL_WINDOW_FULLSCREEN;
     }
 
     if (SDL_InitSubSystem(SDL_INIT_EVERYTHING) == 0) {
@@ -36,7 +56,7 @@ bool Init(const char *title, SDL_Rect window_features, bool fullscreen) {
 
         screen = SDL_CreateWindow("Cpp Game Dev", window_features.x,
                                   window_features.y, window_features.w,
-                                  window_features.h, flags);
+                                  window_features.h, SDLflags);
         if (screen) {
             std::clog << "Window created sucessfully!\n";
         } else {

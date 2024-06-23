@@ -6,12 +6,13 @@ g++ ^
   -g3 ^
   -o ^
   ..\bin\app.exe ^
-  -flto=auto^
-  -O2 ^
   *.o ^
   -lmingw32 ^
   -lSDL2main ^
   -lSDL2 ^
-  -lSDL2_image 
+  -lSDL2_image ^
+  -lyaml-cpp
+  @REM -flto=auto^
+  @REM -O2 ^
 
 @echo Linking process finished!

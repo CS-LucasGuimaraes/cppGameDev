@@ -18,7 +18,7 @@ namespace cppGameDev {
 
 Game::Game() {
     this->tilemap = new Tilemap();
-    this->player = new Player("player", {21, 21, 32, 32}, "", this->tilemap);
+    this->player = new Player({21, 21, 128, 128}, {64-7,64-11,14,22}, "", this->tilemap);
 }
 
 Game::~Game() {
@@ -37,23 +37,32 @@ bool Game::handleEvents() {
 
             case SDL_KEYDOWN:
                 if (assets::keybinds["LEFT"].count(event.key.keysym.sym)) {
-                    this->movement.first = 1;
+                    this->movement.l = 1;
                 } else if (assets::keybinds["RIGHT"].count(
                                event.key.keysym.sym)) {
-                    this->movement.second = 1;
-                } else if (assets::keybinds["JUMP"].count(
+                    this->movement.r = 1;
+                } else if (assets::keybinds["UP"].count(
                                event.key.keysym.sym)) {
-                    this->player->Jump();
+                    this->movement.u = 1;
+                } else if (assets::keybinds["DOWN"].count(
+                               event.key.keysym.sym)) {
+                    this->movement.d = 1;
                 }
 
                 break;
 
             case SDL_KEYUP:
                 if (assets::keybinds["LEFT"].count(event.key.keysym.sym)) {
-                    this->movement.first = 0;
+                    this->movement.l = 0;
                 } else if (assets::keybinds["RIGHT"].count(
                                event.key.keysym.sym)) {
-                    this->movement.second = 0;
+                    this->movement.r = 0;
+                } else if (assets::keybinds["UP"].count(
+                               event.key.keysym.sym)) {
+                    this->movement.u = 0;
+                } else if (assets::keybinds["DOWN"].count(
+                               event.key.keysym.sym)) {
+                    this->movement.d = 0;
                 }
 
                 break;
@@ -63,7 +72,7 @@ bool Game::handleEvents() {
 }
 
 void Game::update() {
-    this->player->update(this->movement.second - this->movement.first);
+    this->player->update(this->movement);
 }
 
 void Game::render() {

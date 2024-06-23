@@ -25,11 +25,20 @@ bool init() {
     keybinds = { 
                 {"LEFT", {SDLK_a, SDLK_LEFT} },
                 {"RIGHT", {SDLK_d, SDLK_RIGHT} },
-                {"JUMP", {SDLK_w, SDLK_UP, SDLK_SPACE} }
+                {"UP", {SDLK_w, SDLK_UP} },
+                {"DOWN", {SDLK_s, SDLK_DOWN} }
             };
 
     animations = {
-        {"player/idle", new Animation(load_images("entities/player/idle"), 16)},
+        {"player/left/idle", new Animation(load_images("entities/player/left/idle"), 5)},
+        {"player/right/idle", new Animation(load_images("entities/player/right/idle"), 5)},
+        {"player/down/idle", new Animation(load_images("entities/player/down/idle"), 5)},
+        {"player/up/idle", new Animation(load_images("entities/player/up/idle"), 5)},
+
+        {"player/left/run", new Animation(load_images("entities/player/left/run"), 5)},
+        {"player/right/run", new Animation(load_images("entities/player/right/run"), 5)},
+        {"player/down/run", new Animation(load_images("entities/player/down/run"), 5)},
+        {"player/up/run", new Animation(load_images("entities/player/up/run"), 5)},
     };
 
     tiles = {

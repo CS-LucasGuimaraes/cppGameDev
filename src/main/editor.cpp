@@ -152,11 +152,11 @@ void Editor::cameraControl() {
 }
 
 Cord Editor::getTilePos() {
-    return {(int)std::floor((((float)this->mpos.x / (float)kRenderScale) +
-                             (float)this->scroll.x) /
-                            (float)this->tilemap->tile_size),
-            (int)std::floor((((float)this->mpos.y / (float)kRenderScale) +
-                             (float)this->scroll.y) /
-                            (float)this->tilemap->tile_size)};
+    return {(int)std::floor((((double)this->mpos.x / (double)kRenderScale) +
+                             (double)this->scroll.x) /
+                            (double)this->tilemap->tile_size),
+            (int)std::floor((((double)this->mpos.y / (double)kRenderScale) +
+                             (double)this->scroll.y) /
+                            (double)this->tilemap->tile_size)};
 }
 }  // namespace cppGameDev

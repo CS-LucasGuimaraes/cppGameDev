@@ -19,13 +19,17 @@ namespace cppGameDev {
 // public:
 
 PhysicsEntities::PhysicsEntities(std::string e_type, SDL_Rect initial_rect,
-                                 std::string ID, Tilemap* tilemap) {
+                                 SDL_Rect hitbox, std::string ID,
+                                 Tilemap* tilemap) {
     this->type = e_type;
     this->entityRect = initial_rect;
     this->pos.x = this->entityRect.x;
     this->pos.y = this->entityRect.y;
+    this->hitbox = this->hitbox_mod = hitbox;
     this->ID = ID;
     this->tilemap = tilemap;
+    this->side = this->setted_side = "down";
+    this->current_speed = 2;
 
     this->set_action("idle");
 
@@ -37,30 +41,32 @@ PhysicsEntities::~PhysicsEntities() {
               << ") successfully destroyed!\n";
 }
 
-void PhysicsEntities::update(int movement) {
+void PhysicsEntities::update(Cord4d movement) {
     this->reset_collisions();
     this->movement_and_collide(movement);
-    this->movement_physics();
-    this->facing_side(movement + this->speed.x);
+    this->facing_side(movement);
     this->animation->update();
+    this->ControlActions(movement);
 }
 
 void PhysicsEntities::render() {
-    if (this->flip)
-        SDL_RenderCopyEx(renderer, this->animation->img(), NULL,
-                         &this->entityRect, 0.0, NULL, SDL_FLIP_HORIZONTAL);
-    else
-        SDL_RenderCopy(renderer, this->animation->img(), NULL,
-                       &this->entityRect);
+        
+    if (kFlags & SHOW_HITBOXES)
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 128);
+    SDL_RenderFillRect(renderer, &this->hitbox);
+    SDL_SetRenderDrawColor(renderer, 120, 120, 120, 255);
+
+    SDL_RenderCopy(renderer, this->animation->img(), NULL, &this->entityRect);
 }
 
 // private:
 
 void PhysicsEntities::set_action(std::string action) {
-    if (action != this->action) {
+    if (action != this->action || this->setted_side != this->side) {
         this->action = action;
-        this->animation =
-            assets::animations[this->type + this->ID + '/' + this->action];
+        this->setted_side = this->side;
+        this->animation = assets::animations[this->type + this->ID + '/' +
+                                             this->side + '/' + this->action];
 
         for (auto img : *this->animation->img_list()) {
             SDL_SetTextureColorMod(img, this->color_mod.r, this->color_mod.g,
@@ -73,22 +79,35 @@ void PhysicsEntities::reset_collisions() {
     this->collisions = {false, false, false, false};
 }
 
-void PhysicsEntities::movement_and_collide(int movement) {
-    Speed frame_movement = {movement + this->speed.x, this->speed.y};
+Speed PhysicsEntities::getFrameMovement(Cord4d movement) {
+    Speed frame_movement = {
+        (movement.r - movement.l) * (double)(this->current_speed),
+        (movement.d - movement.u) * (double)(this->current_speed)};
 
-    this->pos.x += frame_movement.x;
-    this->entityRect.x = this->pos.x;
+    if ((movement.r - movement.l) && (movement.d - movement.u)) {
+        frame_movement.x /= 1.41421356;
+        frame_movement.y /= 1.41421356;
+    }
+
+    return frame_movement;
+}
+
+void PhysicsEntities::movement_and_collide(Cord4d movement) {
+    Speed frame_movement = getFrameMovement(movement);
+
+    this->entityRect.x = this->pos.x += frame_movement.x;
+    this->updateHitboxX();
 
     for (tile* tile : this->tilemap->tiles_around(this->getPos())) {
         SDL_Rect tile_rect = {tile->pos.x * this->tilemap->tile_size,
                               tile->pos.y * this->tilemap->tile_size,
                               tilemap->tile_size, tilemap->tile_size};
 
-            this->collide[tile->category + "X"](frame_movement, &tile_rect);
+        this->collide[tile->category + "X"](frame_movement, &tile_rect);
     }
 
-    this->pos.y += frame_movement.y;
-    this->entityRect.y = this->pos.y;
+    this->entityRect.y = this->pos.y += frame_movement.y;
+    this->updateHitboxY();
 
     for (tile* tile : this->tilemap->tiles_around(this->getPos())) {
         SDL_Rect tile_rect = {tile->pos.x * this->tilemap->tile_size,
@@ -99,126 +118,101 @@ void PhysicsEntities::movement_and_collide(int movement) {
     }
 }
 
-void PhysicsEntities::movement_physics() {
-    this->speed.y = std::min(5.0, this->speed.y + 0.1);  // Gravity
-
-    if (this->speed.x > 0) {
-        this->speed.x = std::max(this->speed.x - 0.1, 0.0);  // Right slowdown
-    } else if (this->speed.x < 0) {
-        this->speed.x = std::min(this->speed.x + 0.1, 0.0);  // Left slowdown
-    }
-
-    if (this->collisions.down || this->collisions.up) {
-        this->speed.y = 0;
+void PhysicsEntities::facing_side(Cord4d movement) {
+    if (this->side == "left" || this->side == "right") {
+        if (movement.r - movement.l < 0) {
+            this->side = "left";
+        } else if (movement.r - movement.l > 0) {
+            this->side = "right";
+        } else if (movement.d - movement.u < 0) {
+            this->side = "up";
+        } else if (movement.d - movement.u > 0) {
+            this->side = "down";
+        }
+    } else if (this->side == "up" || this->side == "down") {
+        if (movement.d - movement.u < 0) {
+            this->side = "up";
+        } else if (movement.d - movement.u > 0) {
+            this->side = "down";
+        } else if (movement.r - movement.l < 0) {
+            this->side = "left";
+        } else if (movement.r - movement.l > 0) {
+            this->side = "right";
+        }
     }
 }
 
-void PhysicsEntities::facing_side(int movement) {
-    if (movement + this->speed.x > 0) {
-        this->flip = false;
-    } else if (movement + this->speed.x < 0) {
-        this->flip = true;
-    }
-}
-
-Cord PhysicsEntities::getPos() {
-    return {this->entityRect.x, this->entityRect.y};
-}
+Cord PhysicsEntities::getPos() { return {this->hitbox.x, this->hitbox.y}; }
 
 void PhysicsEntities::defCollisions() {
     this->collide = {
         {"PhysicalX",
          [this](Speed movement, SDL_Rect* tile_rect) {
-             if (CollideRect(&this->entityRect, tile_rect)) {
+             if (CollideRect(&this->hitbox, tile_rect)) {
                  if (movement.x > 0) {
                      this->collisions.right = true;
-                     this->entityRect.x = tile_rect->x - this->entityRect.w;
+                     this->hitbox.x = tile_rect->x - this->hitbox.w;
                  } else if (movement.x < 0) {
                      this->collisions.left = true;
-                     this->entityRect.x = tile_rect->x + tile_rect->w;
+                     this->hitbox.x = tile_rect->x + tile_rect->w;
                  }
-                 this->pos.x = this->entityRect.x;
+                 this->pos.x = this->hitbox.x - this->hitbox_mod.x;
              }
-         }},
+         }
+        },
 
         {"PhysicalY",
          [this](Speed movement, SDL_Rect* tile_rect) {
-             if (CollideRect(&this->entityRect, tile_rect)) {
+             if (CollideRect(&this->hitbox, tile_rect)) {
                  if (movement.y > 0) {
                      this->collisions.down = true;
-                     this->entityRect.y = tile_rect->y - this->entityRect.h;
+                     this->hitbox.y = tile_rect->y - this->hitbox.h;
                  } else if (movement.y < 0) {
                      this->collisions.up = true;
-                     this->entityRect.y = tile_rect->y + tile_rect->h;
+                     this->hitbox.y = tile_rect->y + tile_rect->h;
                  }
-                 this->pos.y = this->entityRect.y;
+                 this->pos.y = this->hitbox.y - this->hitbox_mod.y;
              }
-         }}
+         }
+        }
 
     };
 }
 
+void PhysicsEntities::ControlActions(Cord4d movement) {
+    if (movement.d - movement.u != 0 || movement.r - movement.l != 0) {
+        this->set_action("run");
+    } else {
+        this->set_action("idle");
+    }
+}
+
+void PhysicsEntities::updateHitbox() {
+    this->hitbox = {this->entityRect.x + this->hitbox_mod.x,
+                    this->entityRect.y + this->hitbox_mod.y, this->hitbox_mod.w,
+                    this->hitbox_mod.h};
+}
+
+void PhysicsEntities::updateHitboxX() {
+    this->hitbox.x = this->entityRect.x + this->hitbox_mod.x;
+}
+
+void PhysicsEntities::updateHitboxY() {
+    this->hitbox.y = this->entityRect.y + this->hitbox_mod.y;
+}
+
 // public
 
-Player::Player(std::string e_type, SDL_Rect initial_rect, std::string ID,
+Player::Player(SDL_Rect initial_rect, SDL_Rect hitbox, std::string ID,
                Tilemap* tilemap)
-    : PhysicsEntities(e_type, initial_rect, ID, tilemap) {
-    this->max_jumps = 2;
-    this->jumps = this->max_jumps;
-    this->air_time = 0;
-    this->in_air = false;
+    : PhysicsEntities("player", initial_rect, hitbox, ID, tilemap) {
+    ;
 }
 
 Player::~Player() { ; }
 
 // private
 
-void Player::JumpControl() {
-    this->air_time++;
-
-    if (this->air_time > 10) {
-        this->in_air = true;
-    }
-
-    if (this->collisions.down) {
-        this->jumps = this->max_jumps;
-        this->air_time = 0;
-        this->in_air = false;
-    }
-}
-
-void Player::update(int movement) {
-    PhysicsEntities::update(movement);
-
-    this->JumpControl();
-}
-
-void Player::WallJump() {
-    if (this->collisions.left) {
-        this->speed.x = +2.75;
-        this->flip = true;
-    } else if (this->collisions.right) {
-        this->speed.x = -2.75;
-        this->flip = false;
-    }
-
-    this->speed.y = -2;
-    this->jumps = std::max(0, this->jumps - 1);
-}
-
-void Player::Jump() {
-    if (this->in_air && (this->collisions.right || this->collisions.left)) {
-        this->WallJump();
-    }
-
-    else if (this->jumps > 0) {
-        if ((this->jumps != this->max_jumps) ||
-            (this->jumps == this->max_jumps && !this->in_air)) {
-            this->speed.y = -3.1;
-            this->jumps--;
-            this->in_air = true;
-        }
-    }
-}
+void Player::update(Cord4d movement) { PhysicsEntities::update(movement); }
 
 }  // namespace cppGameDev

@@ -8,12 +8,12 @@ g++ ^
   -Wall ^
   -g3 ^
   -c ^
-  -O2 ^
-  -flto ^
   ..\src\main.cpp ^
   ..\src\core\*.cpp ^
   ..\src\main\*.cpp  ^
   ..\src\classes\*.cpp ^
   -I..\include
+  @REM -O2 ^
+  @REM -flto ^
 
 @echo Build process finished!

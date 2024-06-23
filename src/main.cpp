@@ -17,8 +17,6 @@
 #include "main/editor.hpp"
 #include "main/game.hpp"
 
-const bool kFullscreen = false;
-
 using namespace cppGameDev;
 
 int main(int argc, char* argv[]) {
@@ -30,8 +28,7 @@ int main(int argc, char* argv[]) {
 
     Init("cppGameDev",
          {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, kScreenSize.x,
-          kScreenSize.y},
-         kFullscreen);
+          kScreenSize.y});
 
     if (assets::init()) {
         std::clog << "Assets initialized!...\n";
@@ -56,24 +53,25 @@ int main(int argc, char* argv[]) {
                 break;
         }
 
-        if (mode) while (app->running()) {
-            frameStart = SDL_GetTicks64();
+        if (mode)
+            while (app->running()) {
+                frameStart = SDL_GetTicks64();
 
-            app->handleEvents();
-            app->update();
-            app->render();
+                app->handleEvents();
+                app->update();
+                app->render();
 
-            processingTime = SDL_GetTicks64() - frameStart;
+                processingTime = SDL_GetTicks64() - frameStart;
 
-            if (frameSize > processingTime) {
-                SDL_Delay(frameSize - processingTime);
-                std::clog << processingTime * 100 / frameSize << '\n';
-            } else {
-                std::cerr << "[WARNING!] GAME IS " << processingTime - frameSize
-                          << "ms DELAYED.\n";
+                if (frameSize > processingTime) {
+                    SDL_Delay(frameSize - processingTime);
+                    // std::clog << processingTime * 100 / frameSize << '\n';
+                } else {
+                    std::cerr << "[WARNING!] GAME IS "
+                              << processingTime - frameSize << "ms DELAYED.\n";
+                }
             }
-        }
-        delete app;
+        if (mode) delete app;
 
         SDL_RenderClear(renderer);
         SDL_RenderPresent(renderer);
