@@ -21,13 +21,14 @@ std::map<std::string, std::unordered_set<int>> keybinds;
 std::map<std::string, Animation *> animations;
 std::map<std::string, std::vector<SDL_Texture *>> tiles;
 std::map<std::string, std::vector<SDL_Texture *>> ui;
+std::map<std::string, std::pair<TTF_Font *, int>> fonts;
 
 bool init() {
   keybinds = {
-      {"LEFT", {SDLK_a, SDLK_LEFT} },
-      {"RIGHT", {SDLK_d, SDLK_RIGHT} },
-      {"UP", {SDLK_w, SDLK_UP} },
-      {"DOWN", {SDLK_s, SDLK_DOWN} },
+      {"LEFT", {SDLK_a, SDLK_LEFT}},
+      {"RIGHT", {SDLK_d, SDLK_RIGHT}},
+      {"UP", {SDLK_w, SDLK_UP}},
+      {"DOWN", {SDLK_s, SDLK_DOWN}},
   };
 
   animations = {
@@ -56,6 +57,15 @@ bool init() {
 
   ui = {
       {"border", load_images("ui/border")},
+      {"divider", load_images("ui/divider")},
+      {"divider_fade", load_images("ui/divider_fade")},
+      {"panel", load_images("ui/panel")},
+      {"transparent_border", load_images("ui/transparent_border")},
+      {"transparent_center", load_images("ui/transparent_center")},
+  };
+
+  fonts = {
+      {"monospaced", {{TTF_OpenFont("../assets/fonts/PixeloidMono.ttf", 12)},12} },
   };
 
   return true;

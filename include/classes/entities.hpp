@@ -69,6 +69,7 @@ class PhysicsEntities {
   std::string side;
   std::string setted_side;
   std::map<std::string, std::function<void(Speed, SDL_Rect*)>> collide;
+  Uint8 layer;
 
   /**
    * Sets the action for the entity.

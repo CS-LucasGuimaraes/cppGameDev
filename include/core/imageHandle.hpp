@@ -38,6 +38,8 @@ SDL_Texture* load_image(const char* path);
  */
 const std::vector<SDL_Texture*> load_images(const char* path);
 
+void RenderCentralizedText(std::string text, TTF_Font * font, int size, SDL_Color color, SDL_Rect text_rect);
+
 }  // namespace cppGameDev
 
 #endif  // CPPGAMEDEV_CORE_IMAGEHANDLE_HPP_

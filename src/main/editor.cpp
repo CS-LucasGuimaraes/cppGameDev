@@ -34,6 +34,8 @@ Editor::Editor() {
   this->control = false;
   this->shift = false;
   this->alt = false;
+
+  this->layer = 127;
 }
 
 Editor::~Editor() {
@@ -125,13 +127,13 @@ bool Editor::handleEvents() {
         break;
 
       case SDL_MOUSEWHEEL:
-        if (!this->shift) {
+        if (this->alt) {
           if (event.wheel.y > 0) {
-            this->tile_group = (this->tile_group + 1) % this->tile_list.size();
+            this->layer++;
           } else if (event.wheel.y < 0) {
-            this->tile_group = (this->tile_group - 1) % this->tile_list.size();
+            this->layer--;
           }
-        } else {
+        } else if (this->shift) {
           if (event.wheel.y > 0) {
             this->tile_variant =
                 (this->tile_variant + 1) %
@@ -140,6 +142,12 @@ bool Editor::handleEvents() {
             this->tile_variant =
                 (this->tile_variant - 1) %
                 assets::tiles[this->tile_list[this->tile_group].first].size();
+          }
+        } else {
+          if (event.wheel.y > 0) {
+            this->tile_group = (this->tile_group + 1) % this->tile_list.size();
+          } else if (event.wheel.y < 0) {
+            this->tile_group = (this->tile_group - 1) % this->tile_list.size();
           }
         }
 
@@ -152,23 +160,21 @@ bool Editor::handleEvents() {
 void Editor::update() {
   this->cameraControl();
 
-  std::cout << (int)this->tile_group << " " << (int)this->tile_variant
-            << std::endl;
-
   if (this->ongrid) {
     Cord tilepos = this->getTilePos();
     std::string tile_loc =
         std::to_string(tilepos.x) + ";" + std::to_string(tilepos.y);
 
     if (this->clicking) {
-      this->tilemap->tilemap[tile_loc] = {
+      this->tilemap->tilemap[this->layer][tile_loc] = {
           this->tile_list[this->tile_group].first, this->tile_variant, tilepos,
           this->tile_list[this->tile_group].second};
+      this->tilemap->layers.insert(this->layer);
     }
 
     if (this->right_clicking) {
-      if (this->tilemap->tilemap.count(tile_loc) != 0) {
-        this->tilemap->tilemap.erase(tile_loc);
+      if (this->tilemap->tilemap[this->layer].count(tile_loc) != 0) {
+        this->tilemap->tilemap[this->layer].erase(tile_loc);
       }
     }
   }
@@ -183,11 +189,13 @@ void Editor::render() {
 
   this->tilemap->render(this->scroll);
   this->RenderTilePreview();
+  this->RenderLayerPreview();
 
   SDL_SetRenderTarget(renderer, NULL);
   SDL_RenderClear(renderer);
 
   SDL_RenderCopy(renderer, display, NULL, NULL);
+  SDL_RenderCopy(renderer, ui_display, NULL, NULL);
 
   SDL_RenderPresent(renderer);
 }
@@ -215,6 +223,21 @@ void Editor::RenderTilePreview() {
 
   SDL_RenderCopy(renderer, tile_img, NULL, &preview);
   SDL_RenderCopy(renderer, assets::ui["border"][7], NULL, &preview);
+}
+
+void Editor::RenderLayerPreview() {
+  SDL_Rect preview = {0 + (int)(this->tilemap->tile_size * 0.5),
+                      0 + (int)(this->tilemap->tile_size * 0.5),
+                      this->tilemap->tile_size, this->tilemap->tile_size};
+
+  SDL_RenderCopy(renderer, assets::ui["transparent_center"][7], NULL, &preview);
+
+  RenderCentralizedText(std::to_string(int(this->layer)),
+                        assets::fonts["monospaced"].first,
+                        assets::fonts["monospaced"].second, {100, 100, 100},
+                        {0 + (int)(this->tilemap->tile_size * 0.5),
+                         0 + (int)(this->tilemap->tile_size * 0.5),
+                         this->tilemap->tile_size, this->tilemap->tile_size});
 }
 
 void Editor::cameraControl() {

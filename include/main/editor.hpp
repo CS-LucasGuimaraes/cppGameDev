@@ -67,6 +67,7 @@ class Editor : public App {
   Cord getTilePos();
 
   void RenderTilePreview();
+  void RenderLayerPreview();
 
   Tilemap* tilemap;
 
@@ -86,6 +87,8 @@ class Editor : public App {
   std::vector<std::pair<std::string, std::string>> tile_list;
   Uint8 tile_group;
   Uint8 tile_variant;
+
+  Uint8 layer;
 };
 }  // namespace cppGameDev
 

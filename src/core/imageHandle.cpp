@@ -37,4 +37,50 @@ const std::vector<SDL_Texture*> load_images(const char* path) {
 
   return images;
 }
+
+void RenderCentralizedText(std::string text, TTF_Font* font, int size,
+                           SDL_Color color, SDL_Rect text_rect) {
+  TTF_SetFontSize(font, size * kRenderScale);
+
+  SDL_Surface* surfaceMessage = TTF_RenderText_Solid(font, text.c_str(), color);
+
+  if (!surfaceMessage) {
+    std::cerr << "[WARNING!] TEXT SURFACE INITIALIZATION FAILED!\n"
+              << "     [SDL]: " << SDL_GetError() << '\n';
+  }
+
+  SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+
+  if (!Message) {
+    std::cerr << "[WARNING!] TEXT TEXTURE INITIALIZATION FAILED!\n"
+              << "     [SDL]: " << SDL_GetError() << '\n';
+  }
+
+  text_rect.h *= kRenderScale;
+  text_rect.w *= kRenderScale;
+  text_rect.x *= kRenderScale;
+  text_rect.y *= kRenderScale;
+
+  int box_x = text_rect.w;
+  int box_y = text_rect.h;
+
+  TTF_SizeText(font, text.c_str(), &text_rect.w, &text_rect.h);
+
+  text_rect.x += int((box_x - text_rect.w) / 2);
+  text_rect.y += int((box_y - text_rect.h) / 2);
+
+
+  SDL_Texture* prev = SDL_GetRenderTarget(renderer);
+
+  SDL_SetRenderTarget(renderer, ui_display);
+  SDL_RenderClear(renderer);
+
+  SDL_RenderCopy(renderer, Message, NULL, &text_rect);
+
+  SDL_SetRenderTarget(renderer, prev);
+
+  SDL_FreeSurface(surfaceMessage);
+  SDL_DestroyTexture(Message);
+}
+
 }  // namespace cppGameDev

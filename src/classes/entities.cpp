@@ -30,6 +30,7 @@ PhysicsEntities::PhysicsEntities(std::string e_type, SDL_Rect initial_rect,
   this->tilemap = tilemap;
   this->side = this->setted_side = "down";
   this->current_speed = 2;
+  this->layer = 127;
 
   this->set_action("idle");
 
@@ -98,7 +99,7 @@ void PhysicsEntities::movement_and_collide(Cord4d movement) {
   this->entityRect.x = this->pos.x += frame_movement.x;
   this->updateHitboxX();
 
-  for (tile* tile : this->tilemap->tiles_around(this->getPos())) {
+  for (tile* tile : this->tilemap->tiles_around(this->getPos(), this->layer)) {
     SDL_Rect tile_rect = {tile->pos.x * this->tilemap->tile_size,
                           tile->pos.y * this->tilemap->tile_size,
                           tilemap->tile_size, tilemap->tile_size};
@@ -111,7 +112,7 @@ void PhysicsEntities::movement_and_collide(Cord4d movement) {
   this->entityRect.y = this->pos.y += frame_movement.y;
   this->updateHitboxY();
 
-  for (tile* tile : this->tilemap->tiles_around(this->getPos())) {
+  for (tile* tile : this->tilemap->tiles_around(this->getPos(), this->layer)) {
     SDL_Rect tile_rect = {tile->pos.x * this->tilemap->tile_size,
                           tile->pos.y * this->tilemap->tile_size,
                           tilemap->tile_size, tilemap->tile_size};

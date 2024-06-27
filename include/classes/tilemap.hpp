@@ -40,14 +40,9 @@ class Tilemap {
  public:
   int tile_size = 32;
 
-  Tilemap() {
-    this->load();
-
-    this->dstR.h = this->tile_size;
-    this->dstR.w = this->tile_size;
-  }
-  ~Tilemap() { this->save(); }
-
+  Tilemap();
+  ~Tilemap();
+  
   /**
    *  Render the tilemap onto the renderer surface.
    *
@@ -55,14 +50,14 @@ class Tilemap {
    */
   void render(Cord offset);
 
-  std::vector<tile*> tiles_around(Cord pos);
+  std::vector<tile*> tiles_around(Cord pos, Uint8 layer);
 
   void load();
 
   void save();
 
-  std::map<std::string, tile> tilemap;
-
+  std::set<int> layers;
+  std::vector<std::map<std::string, tile>> tilemap;
  private:
   SDL_Rect dstR;
 };

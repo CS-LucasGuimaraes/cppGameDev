@@ -19,6 +19,7 @@
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
+#include "SDL2/SDL_ttf.h"
 #include "nlohmann/json.hpp"
 #include "yaml-cpp/yaml.h"
 
@@ -67,9 +68,10 @@ extern const Uint32 SHOW_HITBOXES; /**< The flag for showing hitboxes. */
 
 extern Uint32 kFlags; /**< The global flags variable. */
 
-extern SDL_Window *screen;     /**< The game window. */
-extern SDL_Renderer *renderer; /**< The renderer for drawing graphics. */
-extern SDL_Texture *display;   /**< The texture for displaying graphics. */
+extern SDL_Window *screen;      /**< The game window. */
+extern SDL_Renderer *renderer;  /**< The renderer for drawing graphics. */
+extern SDL_Texture *display;    /**< The texture for displaying graphics. */
+extern SDL_Texture *ui_display; /**< The texture for displaying UI graphics. */
 
 extern const Cord kDisplaySize; /**< The size of the display. */
 extern const Cord kScreenSize;  /**< The size of the screen. */
