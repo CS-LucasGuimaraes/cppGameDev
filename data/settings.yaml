@@ -1,3 +1,11 @@
-# Game Settings
+# This file contains the settings for the game. It is a YAML file, which is a
+# format that is easy to read and write. The settings are loaded by the game
+# and used to configure the game window, the game world, and other settings.
+
+# Graphics Settings
+screen_size: [1366, 768]
+display_size: [640, 360]
 fullscreen: false
+
+# Debug Settings
 show_hitboxes: true

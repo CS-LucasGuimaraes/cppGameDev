@@ -73,15 +73,15 @@ extern SDL_Renderer *renderer;  /**< The renderer for drawing graphics. */
 extern SDL_Texture *display;    /**< The texture for displaying graphics. */
 extern SDL_Texture *ui_display; /**< The texture for displaying UI graphics. */
 
-extern const Cord kDisplaySize; /**< The size of the display. */
-extern const Cord kScreenSize;  /**< The size of the screen. */
-extern const int kRenderScale;  /**< The scale factor for rendering. */
+extern Cord DisplaySize; /**< The size of the display. */
+extern Cord ScreenSize;  /**< The size of the screen. */
+extern int RenderScale;  /**< The scale factor for rendering. */
 
 /**
  * @brief Retrieves the flags from the settings file and sets the appropriate
  * flags in the kFlags variable.
  */
-void getFlags();
+void LoadSettings();
 
 /**
  * @brief Initializes the game engine.
@@ -90,7 +90,7 @@ void getFlags();
  * @param window_features The features of the game window.
  * @return True if the initialization is successful, false otherwise.
  */
-bool Init(const char *title, SDL_Rect window_features);
+bool Init(const char *title);
 
 /**
  * @brief Deallocates resources and shuts down the engine.

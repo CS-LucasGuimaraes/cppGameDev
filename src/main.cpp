@@ -26,8 +26,7 @@ int main(int argc, char* argv[]) {
   Uint64 frameStart;
   Uint64 processingTime;
 
-  Init("cppGameDev", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                      kScreenSize.x, kScreenSize.y});
+  Init("cppGameDev");
 
   if (assets::init()) {
     std::clog << "Assets initialized!...\n";

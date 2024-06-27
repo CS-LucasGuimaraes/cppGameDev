@@ -40,26 +40,26 @@ const std::vector<SDL_Texture*> load_images(const char* path) {
 
 void RenderCentralizedText(std::string text, TTF_Font* font, int size,
                            SDL_Color color, SDL_Rect text_rect) {
-  TTF_SetFontSize(font, size * kRenderScale);
+  TTF_SetFontSize(font, size * RenderScale);
 
   SDL_Surface* surfaceMessage = TTF_RenderText_Solid(font, text.c_str(), color);
 
   if (!surfaceMessage) {
     std::cerr << "[WARNING!] TEXT SURFACE INITIALIZATION FAILED!\n"
-              << "     [SDL]: " << SDL_GetError() << '\n';
+              << "     [SDL] " << SDL_GetError() << '\n';
   }
 
   SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
 
   if (!Message) {
     std::cerr << "[WARNING!] TEXT TEXTURE INITIALIZATION FAILED!\n"
-              << "     [SDL]: " << SDL_GetError() << '\n';
+              << "     [SDL] " << SDL_GetError() << '\n';
   }
 
-  text_rect.h *= kRenderScale;
-  text_rect.w *= kRenderScale;
-  text_rect.x *= kRenderScale;
-  text_rect.y *= kRenderScale;
+  text_rect.h *= RenderScale;
+  text_rect.w *= RenderScale;
+  text_rect.x *= RenderScale;
+  text_rect.y *= RenderScale;
 
   int box_x = text_rect.w;
   int box_y = text_rect.h;

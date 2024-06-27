@@ -26,26 +26,33 @@ SDL_Renderer *renderer = nullptr;
 SDL_Texture *display = nullptr;
 SDL_Texture *ui_display = nullptr;
 
-const Cord kDisplaySize = {640, 360};
-const Cord kScreenSize = {1280, 720};
-const int kRenderScale = kScreenSize.x / kDisplaySize.x;
+Cord ScreenSize;
+Cord DisplaySize;
+int RenderScale;
 
-void getFlags() {
-  YAML::Node config = YAML::LoadFile("../data/settings.yaml");
+void LoadSettings() {
+  YAML::Node settings = YAML::LoadFile("../data/settings.yaml");
 
-  if (config["fullscreen"].as<bool>()) {
+  std::pair<int, int> ss = settings["screen_size"].as<std::pair<int, int>>();
+  std::pair<int, int> ds = settings["display_size"].as<std::pair<int, int>>();
+
+  ScreenSize = {ss.first, ss.second};
+  DisplaySize = {ds.first, ds.second};
+  RenderScale = ScreenSize.x / DisplaySize.x;
+
+  if (settings["fullscreen"].as<bool>()) {
     kFlags |= FULLSCREEN;
   }
 
-  if (config["show_hitboxes"].as<bool>()) {
+  if (settings["show_hitboxes"].as<bool>()) {
     kFlags |= SHOW_HITBOXES;
   }
 }
 
-bool Init(const char *title, SDL_Rect window_features) {
+bool Init(const char *title) {
   Uint32 SDLflags = 0;
 
-  getFlags();
+  LoadSettings();
 
   if (kFlags & FULLSCREEN) {
     SDLflags |= SDL_WINDOW_FULLSCREEN;
@@ -54,26 +61,28 @@ bool Init(const char *title, SDL_Rect window_features) {
   if (SDL_InitSubSystem(SDL_INIT_EVERYTHING) == 0) {
     std::clog << "SDL2 initialized!...\n";
 
-    if (IMG_Init(IMG_INIT_PNG)) {
+    if (IMG_Init(IMG_INIT_PNG) == IMG_INIT_PNG) {
       std::clog << "SDL2_image initialized!...\n";
     } else {
-      std::cerr << "[WARNING!] SDL2_IMAGE INITIALIZATION FAILED!\n";
+      std::cerr << "[WARNING!] SDL2_IMAGE INITIALIZATION FAILED!\n"
+                << "     [SDL] " << IMG_GetError() << '\n';
     }
 
-    if (TTF_Init()) {
+    if (TTF_Init() == 0) {
       std::clog << "SDL2_ttf initialized!...\n";
     } else {
-      std::cerr << "[WARNING!] SDL2_TTF INITIALIZATION FAILED!\n";
+      std::cerr << "[WARNING!] SDL2_TTF INITIALIZATION FAILED!\n"
+                << "     [SDL] " << TTF_GetError() << '\n';
     }
 
-    screen =
-        SDL_CreateWindow("Cpp Game Dev", window_features.x, window_features.y,
-                         window_features.w, window_features.h, SDLflags);
+    screen = SDL_CreateWindow("Cpp Game Dev", SDL_WINDOWPOS_CENTERED,
+                              SDL_WINDOWPOS_CENTERED, ScreenSize.x,
+                              ScreenSize.y, SDLflags);
     if (screen) {
       std::clog << "Window created sucessfully!\n";
     } else {
       std::cerr << "[WARNING!] WINDOW INITIALIZATION FAILED!\n"
-                << "     [SDL]: " << SDL_GetError() << '\n';
+                << "     [SDL] " << SDL_GetError() << '\n';
     }
 
     renderer = SDL_CreateRenderer(screen, -1, 0);
@@ -84,31 +93,32 @@ bool Init(const char *title, SDL_Rect window_features) {
       SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     } else {
       std::cerr << "[WARNING!] RENDERER INITIALIZATION FAILED!\n"
-                << "     [SDL]: " << SDL_GetError() << '\n';
+                << "     [SDL] " << SDL_GetError() << '\n';
     }
 
     display = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
-                                SDL_TEXTUREACCESS_TARGET, kDisplaySize.x,
-                                kDisplaySize.y);
+                                SDL_TEXTUREACCESS_TARGET, DisplaySize.x,
+                                DisplaySize.y);
     if (display) {
       std::clog << "Display (render target) created sucessfully!\n";
       SDL_SetTextureBlendMode(ui_display, SDL_BLENDMODE_BLEND);
 
     } else {
       std::cerr << "[WARNING!] DISPLAY (RENDER TARGET) INITIALIZATION FAILED!\n"
-                << "     [SDL]: " << SDL_GetError() << '\n';
+                << "     [SDL] " << SDL_GetError() << '\n';
     }
 
-    ui_display = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
-                                SDL_TEXTUREACCESS_TARGET, kScreenSize.x,
-                                kScreenSize.y);
+    ui_display =
+        SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
+                          SDL_TEXTUREACCESS_TARGET, ScreenSize.x, ScreenSize.y);
     if (ui_display) {
       std::clog << "UI Display (render target) created sucessfully!\n";
       SDL_SetTextureBlendMode(ui_display, SDL_BLENDMODE_BLEND);
 
     } else {
-      std::cerr << "[WARNING!] UI DISPLAY (RENDER TARGET) INITIALIZATION FAILED!\n"
-                << "     [SDL]: " << SDL_GetError() << '\n';
+      std::cerr
+          << "[WARNING!] UI DISPLAY (RENDER TARGET) INITIALIZATION FAILED!\n"
+          << "     [SDL] " << SDL_GetError() << '\n';
     }
 
     return true;
@@ -122,7 +132,7 @@ void Shutdown() {
   SDL_DestroyWindow(screen);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyTexture(display);
-  
+
   TTF_Quit();
   IMG_Quit();
   SDL_Quit();

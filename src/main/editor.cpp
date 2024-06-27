@@ -206,7 +206,7 @@ void Editor::RenderTilePreview() {
                         tile_cord.y * this->tilemap->tile_size - this->scroll.y,
                         this->tilemap->tile_size, this->tilemap->tile_size};
 
-  SDL_Rect preview = {kDisplaySize.x - (int)(this->tilemap->tile_size * 1.5),
+  SDL_Rect preview = {DisplaySize.x - (int)(this->tilemap->tile_size * 1.5),
                       0 + (int)(this->tilemap->tile_size * 0.5),
                       this->tilemap->tile_size, this->tilemap->tile_size};
 
@@ -246,10 +246,10 @@ void Editor::cameraControl() {
 }
 
 Cord Editor::getTilePos() {
-  return {(int)std::floor((((double)this->mpos.x / (double)kRenderScale) +
+  return {(int)std::floor((((double)this->mpos.x / (double)RenderScale) +
                            (double)this->scroll.x) /
                           (double)this->tilemap->tile_size),
-          (int)std::floor((((double)this->mpos.y / (double)kRenderScale) +
+          (int)std::floor((((double)this->mpos.y / (double)RenderScale) +
                            (double)this->scroll.y) /
                           (double)this->tilemap->tile_size)};
 }

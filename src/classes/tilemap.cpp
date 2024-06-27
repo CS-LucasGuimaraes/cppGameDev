@@ -34,9 +34,9 @@ void Tilemap::render(Cord offset) {
 
   for (int i : this->layers) {
     for (int x = DivFloor(offset.x, this->tile_size);
-         x < DivFloor(offset.x + kDisplaySize.x, this->tile_size) + 1; x++) {
+         x < DivFloor(offset.x + DisplaySize.x, this->tile_size) + 1; x++) {
       for (int y = DivFloor(offset.y, this->tile_size);
-           y < DivFloor(offset.y + kDisplaySize.y, this->tile_size) + 1; y++) {
+           y < DivFloor(offset.y + DisplaySize.y, this->tile_size) + 1; y++) {
         std::string loc = std::to_string(x) + ';' + std::to_string(y);
         if ((tile = this->tilemap[i].find(loc)) != this->tilemap[i].end()) {
           if (tile->second.category == "ANIMATION") {
