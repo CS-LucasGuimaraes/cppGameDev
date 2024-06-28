@@ -34,6 +34,11 @@ int main(int argc, char* argv[]) {
     std::cerr << "[WARNING!] ASSETS INITIALIZATION FAILED!\n";
   }
 
+  SDL_Init(SDL_INIT_JOYSTICK);
+  std::cout << "There are " << SDL_NumJoysticks() << " joysticks connected.\n";
+  a = SDL_GameControllerOpen(0);
+
+
   App* app = nullptr;
   int mode;
   do {
@@ -51,7 +56,7 @@ int main(int argc, char* argv[]) {
         break;
     }
 
-    if (mode)
+    if (mode) {
       while (app->running()) {
         frameStart = SDL_GetTicks64();
 
@@ -69,7 +74,8 @@ int main(int argc, char* argv[]) {
                     << "ms DELAYED.\n";
         }
       }
-    if (mode) delete app;
+      delete app;
+    }
 
     SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);

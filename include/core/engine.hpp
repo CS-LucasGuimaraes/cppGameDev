@@ -23,7 +23,9 @@
 #include "nlohmann/json.hpp"
 #include "yaml-cpp/yaml.h"
 
+
 namespace cppGameDev {
+extern SDL_GameController* a;
 
 /**
  * @brief Represents the RGB color values.

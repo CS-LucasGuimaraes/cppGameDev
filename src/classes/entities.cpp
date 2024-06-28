@@ -29,7 +29,7 @@ PhysicsEntities::PhysicsEntities(std::string e_type, SDL_Rect initial_rect,
   this->ID = ID;
   this->tilemap = tilemap;
   this->side = this->setted_side = "down";
-  this->current_speed = 2;
+  this->current_speed = 0.2;
   this->layer = 127;
 
   this->set_action("idle");
@@ -50,14 +50,21 @@ void PhysicsEntities::update(Cord4d movement) {
   this->ControlActions(movement);
 }
 
-void PhysicsEntities::render() {
+void PhysicsEntities::render(Cord offset) {
+  SDL_Rect render_rect = {this->entityRect.x-offset.x, this->entityRect.y-offset.y,
+                         this->entityRect.w, this->entityRect.h};
+
   if (kFlags & SHOW_HITBOXES) {
+    SDL_Rect hitbox_rect = {this->hitbox.x-offset.x, this->hitbox.y-offset.y,
+                            this->hitbox.w, this->hitbox.h};
+
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 128);
-    SDL_RenderFillRect(renderer, &this->hitbox);
+    SDL_RenderFillRect(renderer, &hitbox_rect);
     SDL_SetRenderDrawColor(renderer, 120, 120, 120, 255);
   }
 
-  SDL_RenderCopy(renderer, this->animation->img(), NULL, &this->entityRect);
+  SDL_RenderCopy(renderer, this->animation->img(), NULL, &render_rect);
+
 }
 
 // private:
@@ -187,12 +194,6 @@ void PhysicsEntities::ControlActions(Cord4d movement) {
   } else {
     this->set_action("idle");
   }
-}
-
-void PhysicsEntities::updateHitbox() {
-  this->hitbox = {this->entityRect.x + this->hitbox_mod.x,
-                  this->entityRect.y + this->hitbox_mod.y, this->hitbox_mod.w,
-                  this->hitbox_mod.h};
 }
 
 void PhysicsEntities::updateHitboxX() {

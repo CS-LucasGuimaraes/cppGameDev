@@ -15,6 +15,7 @@
 #include "core/engine.hpp"
 
 namespace cppGameDev {
+  SDL_GameController* a;
 
 const Uint32 FULLSCREEN = (1 << 0);
 const Uint32 SHOW_HITBOXES = (1 << 1);

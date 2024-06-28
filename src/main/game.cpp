@@ -21,6 +21,7 @@ Game::Game() {
   this->player = new Player({21, 21, 128, 128}, {64 - 7, 64 - 11, 14, 22}, "",
                             this->tilemap);
   this->movement = {0, 0, 0, 0};
+  this->offset = {0, 0};
 }
 
 Game::~Game() {
@@ -62,19 +63,42 @@ bool Game::handleEvents() {
         }
 
         break;
+
+      // case SDL_CONTROLLERAXISMOTION:
+      //   std::cout << "AXIS " << (int)event.caxis.axis << " VALUE "
+      //             << event.caxis.value << '\n';
+      //   break;
+      // case SDL_CONTROLLERBUTTONDOWN:
+      //   std::cout << "BUTTON " << (int)event.cbutton.button << " DOWN\n";
+      //   break;
+      // case SDL_CONTROLLERBUTTONUP:
+      //   std::cout << "BUTTON " << (int)event.cbutton.button << " UP\n";
+      //   break;
+      
+
+      // default:
+      //   std::cout << "event type: " << event.type << '\n'; 
+      //   break;
     }
   }
   return true;
 }
 
-void Game::update() { this->player->update(this->movement); }
+void Game::update() {
+  this->CameraControl();
+  this->player->update(this->movement);
+
+  this->movement.r = (SDL_GameControllerGetAxis(a, SDL_CONTROLLER_AXIS_LEFTX)/3276.7f);
+  this->movement.d = (SDL_GameControllerGetAxis(a, SDL_CONTROLLER_AXIS_LEFTY)/3276.7f);
+
+}
 
 void Game::render() {
   SDL_SetRenderTarget(renderer, display);
   SDL_RenderClear(renderer);
 
-  this->tilemap->render({0, 0});
-  this->player->render();
+  this->tilemap->render(this->offset);
+  this->player->render(this->offset);
 
   SDL_SetRenderTarget(renderer, NULL);
   SDL_RenderClear(renderer);
@@ -82,5 +106,16 @@ void Game::render() {
   SDL_RenderCopy(renderer, display, NULL, NULL);
 
   SDL_RenderPresent(renderer);
+}
+
+void Game::CameraControl() {
+  this->offset.x += (int)((this->player->getEntityRect().x +
+                           this->player->getEntityRect().w / 2) -
+                          DisplaySize.x / 2 - this->offset.x) /
+                    64;
+  this->offset.y += (int)((this->player->getEntityRect().y +
+                           this->player->getEntityRect().h / 2) -
+                          DisplaySize.y / 2 - this->offset.y) /
+                    36;
 }
 }  // namespace cppGameDev

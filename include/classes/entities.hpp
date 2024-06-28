@@ -29,10 +29,37 @@ struct Collisions {
   bool right;
 };
 
+/**
+ * @class PhysicsEntities
+ * @brief Represents a physics-based entity in the game.
+ *
+ * The PhysicsEntities class is a base class for all physics-based entities
+ * in the game. It provides common functionality and properties for entities
+ * that interact with the game's physics system.
+ */
 class PhysicsEntities {
  public:
+  /**
+   * @brief Constructs a PhysicsEntities object.
+   *
+   * This constructor initializes a PhysicsEntities object with the specified
+   * parameters.
+   *
+   * @param e_type The type of the entity.
+   * @param initial_rect The initial position and size of the entity.
+   * @param hitbox The hitbox of the entity.
+   * @param ID The ID of the entity.
+   * @param tilemap A pointer to the tilemap object.
+   */
   PhysicsEntities(std::string e_type, SDL_Rect initial_rect, SDL_Rect hitbox,
                   std::string ID, Tilemap* tilemap);
+
+  /**
+   * @brief Destroys the PhysicsEntities object.
+   *
+   * This destructor is responsible for cleaning up any resources used by the
+   * PhysicsEntities object.
+   */
   virtual ~PhysicsEntities();
 
   /**
@@ -51,28 +78,36 @@ class PhysicsEntities {
    *
    * This function is called to render the entity on the screen.
    */
-  virtual void render();
-
- protected:
-  int current_speed;
-  std::string type;
-  std::string ID;
-  std::string action = "";
-  cppGameDev::Speed pos;
-  cppGameDev::RGB color_mod = {255, 255, 255};
-  Tilemap* tilemap;
-  Animation* animation;
-  SDL_Rect entityRect;
-  SDL_Rect hitbox;
-  SDL_Rect hitbox_mod;
-  Collisions collisions;
-  std::string side;
-  std::string setted_side;
-  std::map<std::string, std::function<void(Speed, SDL_Rect*)>> collide;
-  Uint8 layer;
+  virtual void render(Cord offset);
 
   /**
-   * Sets the action for the entity.
+   * @brief Get the rectangle representing the entity's position and size.
+   * 
+   * @return The SDL_Rect representing the entity's position and size.
+   */
+  SDL_Rect getEntityRect() { return this->entityRect; }
+
+ protected:
+  float current_speed;       /**< The current speed of the entity. */
+  std::string type;        /**< The type of the entity. */
+  std::string ID;          /**< The ID of the entity. */
+  std::string action = ""; /**< The current action of the entity. */
+  cppGameDev::Speed pos;   /**< The position of the entity. */
+  cppGameDev::RGB color_mod = {255, 255, 255}; /**< The color modifier. */
+  Tilemap* tilemap;        /**< A pointer to the tilemap object. */
+  Animation* animation;    /**< The animation of the entity. */
+  SDL_Rect entityRect;     /**< Rect representing entity's position and size. */
+  SDL_Rect hitbox;         /**< The hitbox of the entity. */
+  SDL_Rect hitbox_mod;     /**< Th hitbox modifier of the entity. */
+  Collisions collisions;   /**< The collisions of the entity.*/
+  std::string side;        /**< The side that the entity should look. */
+  std::string setted_side; /**< The side that the entity is really looking. */
+  std::map<std::string, std::function<void(Speed, SDL_Rect*)>>
+      collide; /**< The collision functions of the entity. */
+  Uint8 layer; /**< The layer where the entity currently is. */
+
+  /**
+   * @brief Sets the action for the entity.
    *
    * @param action The action to set.
    */
@@ -116,15 +151,36 @@ class PhysicsEntities {
    */
   void facing_side(Cord4d movement);
 
+  /**
+   * @brief Defines the collision functions for the entity.
+   */
   void defCollisions();
 
+  /**
+   * @brief Controls the actions of the entity.
+   *
+   * @param movement The movement vector of the entity.
+   */
   void ControlActions(Cord4d movement);
 
+  /**
+   * @brief Gets the movement vector for the current frame.
+   *
+   * @param movement The movement vector of the entity.
+   * @return The movement vector for the current frame.
+   */
   Speed getFrameMovement(Cord4d movement);
 
-  void updateHitbox();
+  /**
+   * @brief Updates the hitbox position along the X-axis.
+   */
   void updateHitboxX();
+
+  /**
+   * @brief Updates the hitbox position along the Y-axis.
+   */
   void updateHitboxY();
+
 };
 
 class Player : public PhysicsEntities {

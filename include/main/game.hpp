@@ -65,6 +65,9 @@ class Game : public App {
   Tilemap* tilemap;
   Player* player;
   Cord4d movement;
+  Cord offset;
+
+  void CameraControl();
 };
 }  // namespace cppGameDev
 
